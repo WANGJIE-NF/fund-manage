@@ -58,7 +58,7 @@ export default {
                 email: '',
                 password: '',
                 password2: '',
-                identity: '',
+                identity: '员工',
             },
             rules: {
                 name:[
@@ -78,9 +78,6 @@ export default {
                 password2:[
                     {validator: validatePass2, trigger: 'blur'}
                 ],
-                identity:[
-                    {required: true, message: '请选择身份', trigger: 'blur' },
-                ]
             },
         }
     },
@@ -90,12 +87,19 @@ export default {
     methods: {
         submitForm(formName) {
         this.$refs[formName].validate((valid) => {
-          if (valid) {
-            alert('submit!');
-          } else {
-            console.log('error submit!!');
-            return false;
-          }
+            if (valid) {
+                this.$axios.post("/api/users/register", this.registerUser)
+                    .then((res) => {
+                        this.$message({
+                            message: '注册成功',
+                            type: "success"
+                        })
+                        this.$router.push({name: 'loginLink'})
+                    })
+                    .catch((err => {
+                        console.log(err)
+                    }));
+            } 
         });
       },
     },
