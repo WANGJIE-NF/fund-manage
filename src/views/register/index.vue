@@ -1,45 +1,53 @@
 <template>
-<div class="register">
-    <section class="form-container">
-        <div class="manage-tip">
+    <div class="register">
 
-            <span class="ti">资金管理系统</span>
-            
-            <el-form :model="registerUser" status-icon :rules="rules" ref="registerFrom" label-width="80px" class="register-from">
-                <el-form-item label="用户名" prop="name">
-                    <el-input type="text" v-model="registerUser.name" placeholder='请输入用户名'></el-input>
-                </el-form-item>
-                <el-form-item label="邮箱" prop="email">
-                    <el-input type="email" v-model="registerUser.email" placeholder='请输入邮箱'></el-input>
-                </el-form-item>
-                <el-form-item label="密码" prop="password">
-                    <el-input type="password" v-model="registerUser.password" placeholder='请输入密码'></el-input>
-                </el-form-item>
-                 <el-form-item label="确认密码" prop="password2">
-                    <el-input type="password" v-model="registerUser.password2" placeholder='请输入密码'></el-input>
-                </el-form-item>
-                  <el-form-item label="选择身份" prop="identity">
-                    <el-select v-model="registerUser.identity" placeholder='请选择身份'>
-                        <el-option label='管理员' value='manage'></el-option>
-                        <el-option label='员工' value='employee'></el-option>
-                    </el-select>
-                </el-form-item>
+        <transition name="register" appear>
+            <section class="form-container">
 
-              
-                <el-form-item>
-                    <el-button type="primary" class="submit_btn" @click="submitForm('registerFrom')">提交</el-button>
-                </el-form-item>
+                <span class="title">资金管理系统</span>
+                
+                <el-form :model="registerUser" status-icon :rules="rules" ref="registerFrom" label-width="80px" class="register-from">
+                    <el-form-item label="用户名" prop="name">
+                        <el-input type="text" v-model="registerUser.name" placeholder='请输入用户名'></el-input>
+                    </el-form-item>
+                    <el-form-item label="邮箱" prop="email">
+                        <el-input type="email" v-model="registerUser.email" placeholder='请输入邮箱'></el-input>
+                    </el-form-item>
+                    <el-form-item label="密码" prop="password">
+                        <el-input type="password" v-model="registerUser.password" placeholder='请输入密码'></el-input>
+                    </el-form-item>
+                    <el-form-item label="确认密码" prop="password2">
+                        <el-input type="password" v-model="registerUser.password2" placeholder='请输入密码'></el-input>
+                    </el-form-item>
+                    <el-form-item label="选择身份" prop="identity">
+                        <el-select v-model="registerUser.identity" placeholder='请选择身份'>
+                            <el-option label='管理员' value='manage'></el-option>
+                            <el-option label='老板' value='employee'></el-option>
+                        </el-select>
+                    </el-form-item>
 
-            </el-form>
+                    <el-form-item label-width="0">
+                        <el-button type="primary" class="submit_btn"  @click="submitForm('registerFrom')">提交</el-button>
+                    </el-form-item>
 
-        </div>
-    </section>
+                        <div class="to-login">
+                        <p>已有账号，<router-link to="/login">立即登录</router-link></p>
+                    </div>
 
-</div>
+                </el-form>
+
+            </section>
+        </transition>
+        
+    </div>
     
 </template>
 
 <script>
+
+import {add_user,} from '../../api/fetchData';
+
+
 export default {
     name: 'register',
     data(){
@@ -54,12 +62,21 @@ export default {
         };
         return{
             registerUser: {
-                name: '',
-                email: '',
-                password: '',
-                password2: '',
-                identity: '员工',
+                name: "",
+                email: "",
+                password: "",
+                password2: "",
+                identity: "管理员",
+
+                id: '',
+                user_id: '',
+                reg_date: '',
+                avatar: '',
+                completed: '',
+                province : '',
+                city: ''
             },
+             
             rules: {
                 name:[
                     {required: true, message: '请输入用户名', trigger: 'blur' },
@@ -88,18 +105,19 @@ export default {
         submitForm(formName) {
         this.$refs[formName].validate((valid) => {
             if (valid) {
-                this.$axios.post("/api/users/register", this.registerUser)
+                this.registerUser.reg_date = new Date().getTime()
+                add_user(this.registerUser)
                     .then((res) => {
                         this.$message({
                             message: '注册成功',
                             type: "success"
                         })
-                        this.$router.push({name: 'loginLink'})
+                        this.$router.push('/login')
                     })
                     .catch((err => {
                         console.log(err)
                     }));
-            } 
+            }
         });
       },
     },
@@ -112,9 +130,23 @@ export default {
 .register{
     position: relative;
     width: 100%;
-    height: 100%;
+    height: 100vh;
     background: url('../../assets/bg.jpg') no-repeat center center;
     background-size: 100% 100%;
+}
+
+.register-enter{
+    opacity: 0;
+    transform: translatey(-100px)
+}
+
+.register-enter-active{
+    transition: all 0.5s ease-in-out;
+}
+
+.register-enter-to{
+    transform: translatey(0) ;
+    
 }
 
 .form-container{
@@ -126,7 +158,7 @@ export default {
     text-align: center;
 }
 
-.manage-tip span{
+.title{
     font-size: 16px;
     font-weight: 600;
     color: #fff;
@@ -140,31 +172,11 @@ export default {
     box-shadow: 0px 5px 10px #cccc;
 }
 
+.to-login p{
+    text-align: right;
+    font-size: 12px;
+}
 
 
-.el-row {
-    margin-bottom: 20px;
-  
-  }
-  .el-col {
-    border-radius: 4px;
-  }
-  .bg-purple-dark {
-    background: #99a9bf;
-  }
-  .bg-purple {
-    background: #d3dce6;
-  }
-  .bg-purple-light {
-    background: #e5e9f2;
-  }
-  .grid-content {
-    border-radius: 4px;
-    min-height: 36px;
-  }
-  .row-bg {
-    padding: 30px 0;
-    background-color: #f9fafc;
-  }
 
 </style>

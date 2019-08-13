@@ -1,9 +1,38 @@
 <template>
   <div id="app">
     <router-view/>
-    
   </div>
 </template>
+
+<script>
+import jwt_decode from 'jwt-decode';
+
+export default {
+    name: 'app',
+
+    methods: {
+                           
+      isEmpty(value) {
+        return (
+          value === undefined ||
+          value === null ||
+          (typeof value === "object" && Object.keys(value).length === 0) ||
+          (typeof value === "string" && value.trim().length === 0)
+        );
+      },
+    },
+
+    created(){
+      // 获取token
+      if(!localStorage.eleToken) return;
+      const decoded = jwt_decode(localStorage.eleToken);
+      this.$store.dispatch("setIsAutnenticated", !this.isEmpty(decoded));
+      this.$store.dispatch("setUser", decoded);
+    }
+    
+}
+</script>
+
 
 <style>
 blockquote, body, button, dd, dl, dt, fieldset, form, 
@@ -28,6 +57,5 @@ html,
 body,
 #app{
   width: 100%;
-  height: 100%;
 }
 </style>
