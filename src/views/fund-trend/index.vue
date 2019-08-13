@@ -1,12 +1,12 @@
 <template>
     <div class="fund-trend">
 
-        <p>账户余额：{{bank_savings}}</p>
+        <div class="bank_savings">账户余额：{{bank_savings}}</div>
 
         <div>
             <el-row>
                 <el-col :span="22">
-
+                    <DatePick :all_table_data="all_table_data" @datePick="datePick"></DatePick>
                 </el-col>
                 <el-col :span="2">
                     <el-button type="primary" icon="view" size="small" @click="onhandleAdd()" > 添加 </el-button>
@@ -61,13 +61,14 @@
         </div>
 
         <div class="pagination">
-            <Pagination :all_table_data="all_table_data" @pagination="pagination"></Pagination>
+            <Pagination :date_filter_table_data="date_filter_table_data" @pagination="pagination"></Pagination>
         </div>
     </div>
 </template>
 
 <script>
 import {get_fund_trend, get_bank_savings, delete_fund_trend} from '../../api/fetchData';
+import DatePick from '../../components/datePick';
 import Dialog from '../../components/dialog';
 import Pagination from '../../components/pagination';
 
@@ -79,12 +80,14 @@ export default {
             bank_savings: '',   // 账户余额
             dialog: {},     // 对话框属性
             dialog_form_data: {}, // 对话框表单数据
-            all_table_data: []  // 从后台获取到的所有资金流水列表
+            all_table_data: [],  // 从后台获取到的所有资金流水列表
+            date_filter_table_data: [] // 按时间筛选后的数据
         }
     },
     components: {
         Dialog,
         Pagination,
+        DatePick,
     },
     methods: {
         handleEdit(index, row) {
@@ -144,7 +147,10 @@ export default {
 
         updata(){
             get_fund_trend()
-                .then( res => this.all_table_data = res )
+                .then( res => {
+                    this.all_table_data = res;
+                    this.date_filter_table_data = res;
+                })
                 .catch( err => console.log(err) )
 
             get_bank_savings()
@@ -153,7 +159,11 @@ export default {
         },
 
         pagination(val){
-            this.table_data = val
+            this.table_data = val;
+        },
+
+        datePick(val){
+            this.date_filter_table_data = val;
         },
 
 
@@ -213,6 +223,10 @@ export default {
 .border{
     border-radius: 5px;
     border: 1px solid #ccc;
+}
+
+.el-row{
+    padding: 10px 0;
 }
 
 .tooltip{

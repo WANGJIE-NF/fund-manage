@@ -31,7 +31,7 @@ export default {
         }
     },
     props: {
-        all_table_data: {
+        date_filter_table_data: {
             type: Array,
             default: [],
         },
@@ -42,7 +42,7 @@ export default {
         handleSizeChange(val) {
             // console.log(`每页 ${val} 条`);
             this.pagination.page_size = val;
-            this.table_data = this.all_table_data.filter((item, index) => {
+            this.table_data = this.date_filter_table_data.filter((item, index) => {
                 return index < val;
             })
         },
@@ -50,18 +50,18 @@ export default {
             // console.log(`当前页: ${val}`);
             let min = this.pagination.page_size * (val -1);
             let max = min + this.pagination.page_size;
-            this.table_data = this.all_table_data.filter((item, index) => {
-                if(this.all_table_data[index]){
+            this.table_data = this.date_filter_table_data.filter((item, index) => {
+                if(this.date_filter_table_data[index]){
                     return index >= min && index < max;
                 }
             })
         },
 
         setPagination(){
-            this.pagination.total = this.all_table_data.length;
+            this.pagination.total = this.date_filter_table_data.length;
             this.pagination.page_index = 1;
             this.pagination.page_size = 5;
-            this.table_data = this.all_table_data.filter((item, index) => {
+            this.table_data = this.date_filter_table_data.filter((item, index) => {
                 return index < this.pagination.page_size;
             })
         },
@@ -69,7 +69,7 @@ export default {
 
     watch: {
         
-        all_table_data:  function(val, oldVal){
+        date_filter_table_data:  function(val, oldVal){
             this.setPagination()
             this.$emit("pagination", this.table_data)
         },
