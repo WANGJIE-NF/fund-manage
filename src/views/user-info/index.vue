@@ -3,7 +3,7 @@
 
         <el-col :span="5" class="user-info-left box-show">
             
-            <img class="icon-user" src="https://cdn.duitang.com/uploads/item/201608/25/20160825214118_nMzNT.thumb.700_0.jpeg" alt="">
+            <img class="icon-user" src="https://timgsa.baidu.com/timg?image&quality=80&size=b10000_10000&sec=1565747915&di=aebc2b1dc356419921c4d67b4cb47337&src=http://pic.qqtn.com/up/2019-3/2019030110333952730.jpg">
             <p class="user-name">wangjie</p>
             
             <p class="user-identity">
